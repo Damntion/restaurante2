@@ -1,7 +1,9 @@
 import React from 'react';
-import App from '/src/App.jsx';
+import App from '../../views/App';
 import {Routes, Route} from 'react-router-dom';
 import Login from '../../views/Login';
+import TusReservas from '../../views/TusReservas';
+import Reservar from '../../views/Reservar';
 
 class Router extends React.Component{
     render()
@@ -21,6 +23,14 @@ class Router extends React.Component{
                 <Route
                     path='/Login'
                     element={<Login />}
+                />
+                <Route
+                    path='/TusReservas'
+                    element={<TusReservas />}
+                />
+                <Route
+                    path='/Reservar'
+                    element={<Reservar />}
                 />
             </Routes>
         

@@ -1,114 +1,126 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import $ from 'jquery';
-import Register from './Register';
+import Register from '../componets/Register';
+import Header from '../componets/Header';
+import Footer from '../componets/Footer';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
+    const [datosForm, setDatosForm] = useState({
+      email: '',
+      password: '',
+    });
 
+  const [eventRegister, setEventRegister] = useState(false);
+  const navigate = useNavigate();
 
-  //creamos una variable llamada datosForm y le damos un estado con cada uno de los datos del formulario en strings vacios 
-  const [datosForm, setdatosForm] = useState({
-    email: '',
-    password: '',
-  });
-
-  //Hacemos un login haciendo una solicitud con axios
-  const loginAxios = (event) => {
-    //con esta funcion evitamos que se recarge el formulario cuando se recarga
+  const loginFetch = (event) => {
     event.preventDefault();
-    
-    //obtenemos los datos de la variable datosForm y los guardamos en variables con los nombres necesarios para la consulta
     const user = {
       email: datosForm.email,
       password: datosForm.password,
     };
 
-
-    $.ajax({
-      url: "http://localhost:8080/FullCalendar/public/api/login",
+    fetch("http://localhost:8080/FullCalendar/public/api/login", {
       method: 'POST',
-      data: user,
-      dataType: 'json',
-      success: function (response) {
-        console.log('Usuario autenticado correctamente', response);
+      headers: {
+        'Content-Type': 'application/json',
       },
-      error: function (error) {
-        console.error('Error al autenticar usuario:', error.responseJSON.message);
+      body: JSON.stringify(user),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la autenticación');
       }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Usuario autenticado correctamente', data);
+      localStorage.setItem('token', data.token); // Corrección aquí
+      localStorage.setItem('email', JSON.stringify(data.email)); 
+      localStorage.setItem('password', JSON.stringify(data.password)); 
+      localStorage.setItem('id', JSON.stringify(data.id)); 
+      setTimeout(()=>{
+        navigate('/');
+      }, 3000);
+      
+    })
+    .catch(error => {
+      console.error('Error al autenticar usuario:', error.message);
     });
-
-
   };
 
-
-  //actualiza los datos de estado de la variable datosForm cogiendo los datos de los imputs, desectructurandolos y actualizandoselos a las variables de estado
   const cambiosForm = (event) => {
     const { name, value } = event.target;
-    setdatosForm({ ...datosForm, [name]: value });
+    setDatosForm({ ...datosForm, [name]: value });
   };
 
-  //creamos una variable para leer el estado del texto para registrarse, por predetermiando le ponemos el stado a false 
-  const [eventRegister, seteventRegister] = useState(false);
-
-  //creamos una funcion de flecha para que cuando se clicke sobre el texto para registrarse el estado se ponga a true
-  const clickRegister=()=>{
-    seteventRegister(true);
-  }
-
+  const toggleRegister = () => {
+    setEventRegister(!eventRegister);
+  };
 
   return (
-    /*Estructura del formulario de login con la funcion "loginAxios"*/
-    <div className="w-full max-w-md mx-auto p-6 space-y-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold">Bienvenido de nuevo!</h2>
-        <p className="text-gray-500 dark:text-gray-400">Por favor ingrese aqui sus credenciales.</p>
-      </div>
-      <form className="space-y-4" onSubmit={loginAxios}>
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={datosForm.email}
-            onChange={cambiosForm}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="Email"
-          />
+    <div style={{ backgroundImage: `url('./src/assets/login2.jpg')`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center' // Centra la imagen en el div
+    }}>
+      
+      <Header />
+      <div className="w-full max-w-md mx-auto p-6 mt-32 space-y-6" >
+        
+        <div className="text-center">
+          <h2 className="text-3xl font-bold">¡Bienvenido de nuevo!</h2>
+          <p className="text-gray-500 dark:text-gray-400">Por favor ingrese aquí sus credenciales.</p>
         </div>
-        <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={datosForm.password}
-            onChange={cambiosForm}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="Password"
-          />
-        </div>
-        <div className="mt-4 text-center">
-          <button
-            type="onSubmit"
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-md
-            hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700"
-          >
-            Iniciar sesion
-          </button>
-        </div>
-      </form>
+        <form className="space-y-4" onSubmit={loginFetch}>
+          <div className="space-y-2">
+            <label htmlFor="email" className="block  text-lg font-bold text-gray-700">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={datosForm.email}
+              onChange={cambiosForm}
+              className="appearance-none block w-full h-12 px-3 py-2 border-2 border-black rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Email"
+            />
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="password" className="block text-lg font-bold font-size-200 text-gray-700">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={datosForm.password}
+              onChange={cambiosForm}
+              className="appearance-none block w-full h-12 px-3 py-2 border-black border-2 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Password"
+            />
+          </div>
+          <div className="mt-4 text-center">
+            <button
+              type="submit"
+              className="px-4 py-2 h-14 w-80 text-sm font-medium text-white rounded-md bg-gradient-to-t from-gray-500  hover:bg-gray-600 transition duration-300 ">
+              Iniciar sesión
+            </button>
+          </div>
+        </form>
 
-    <button onClick={clickRegister} className="text-blue-800 font-bold">Si no tiene cuenta registrase pulsando aqui</button>
-                  {eventRegister && <Register />}
+        <button onClick={toggleRegister} className=" text-blue-800 font-bold">Si no tiene cuenta, pulse aquí para registrarse</button>
+        {eventRegister && <Register />}
+
+      </div>
+      <div className='mt-56 flex items-start bg-black py-4 text-white  bottom-0 w-full'>
+      <Footer/>
+      </div>
     </div>
   );
 };

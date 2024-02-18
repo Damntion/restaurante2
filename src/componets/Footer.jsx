@@ -1,12 +1,15 @@
+import {Link} from 'react-router-dom';
+
 // Definición del componente Footer
 function Footer() {
   // Retorna la estructura del componente
   return (
     <footer class="flex items-start bg-black py-4 text-white  bottom-0 w-full">
-        {/* div con el logo en el pie de página */}
-        <div id="logoPie" class="text-center pr-10 w-full">
-            <img src="/src/assets/logo.png" alt="Logo" class="w-20"/>
-        </div>
+        <Link
+        to="/"
+        class="text-center pr-10 w-full" id="logoPie">
+        <img src="/src/assets/logoBlanco.png" alt="Logo" className="w-24"/>
+        </Link>
         {/* div  de información de llamadas y ubicación */}
         <div id="llamadas" class="w-1/2">
             <h3>&#x1F4DE; LLÁMANOS</h3>
