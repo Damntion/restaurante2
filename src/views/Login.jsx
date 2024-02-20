@@ -5,14 +5,19 @@ import Footer from '../componets/Footer';
 import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
+    // Estado para gestionar los datos del formulario de inicio de sesión
     const [datosForm, setDatosForm] = useState({
       email: '',
       password: '',
     });
 
+  // Estado para controlar la visualización del formulario de registro
   const [eventRegister, setEventRegister] = useState(false);
+  // Hook para navegar programáticamente entre rutas
+  //Cuando hace el login este hook te manda a la pagina principal
   const navigate = useNavigate();
 
+  //Solicitud a la api
   const loginFetch = (event) => {
     event.preventDefault();
     const user = {
@@ -35,10 +40,16 @@ export const Login = () => {
     })
     .then(data => {
       console.log('Usuario autenticado correctamente', data);
-      localStorage.setItem('token', data.token); // Corrección aquí
+      localStorage.setItem('token', data.token); 
       localStorage.setItem('email', JSON.stringify(data.email)); 
       localStorage.setItem('password', JSON.stringify(data.password)); 
       localStorage.setItem('id', JSON.stringify(data.id)); 
+      localStorage.setItem('name', JSON.stringify(data.name)); 
+      // if (data.tarjetas && data.tarjetas.length > 0) {
+      //   localStorage.setItem('tarjetas', JSON.stringify(data.tarjetas));
+      // } else {
+      //   localStorage.removeItem('tarjetas'); 
+      // } 
       setTimeout(()=>{
         navigate('/');
       }, 3000);
@@ -49,21 +60,23 @@ export const Login = () => {
     });
   };
 
+  //EsTA funcion maneja los cambios en el formulario y actualiza el estado
   const cambiosForm = (event) => {
     const { name, value } = event.target;
     setDatosForm({ ...datosForm, [name]: value });
   };
-
+  //Maneja el evento de renderizado del componente Register
   const toggleRegister = () => {
+    //De base esta en false, con esto lo ponemos a true
     setEventRegister(!eventRegister);
   };
 
   return (
-    <div style={{ backgroundImage: `url('./src/assets/login2.jpg')`,
+    <div className='flex flex-col min-h-screen' style={{ backgroundImage: `url('./src/assets/login2.jpg')`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center center' // Centra la imagen en el div
-    }}>
+    }} >
       
       <Header />
       <div className="w-full max-w-md mx-auto p-6 mt-32 space-y-6" >

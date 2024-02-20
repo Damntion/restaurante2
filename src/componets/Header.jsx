@@ -9,7 +9,7 @@ function Header() {
   const isLoggedIn = localStorage.getItem('token'); // Revisa si el token existe
 
   const logout = () => {
-    localStorage.clear(); // Limpia todo el localStorage, incluido el token
+    localStorage.clear(); // Limpia todo el localStorage
     navigate('/login'); // Redirecciona al usuario a la página de login
   };
   

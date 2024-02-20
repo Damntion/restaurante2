@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
 
 function App() {
   const [datos, setDatos] = useState([]);
+  const name = localStorage.getItem('name');
 
   function datosFetch() {
     const token = localStorage.getItem('token'); // Recuperamos el token almacenado
@@ -32,20 +32,17 @@ function App() {
       console.error('Error en Fetch:', error);
     });
   }
-  
 
-  function BorrardatosFetch() {
+
+  function BorrardatosFetch(id) {
     const token = localStorage.getItem('token'); // Recuperamos el token almacenado
-    const url = `http://localhost:8080/FullCalendar/public/api/borrar`;
+    const url = `http://localhost:8080/FullCalendar/public/api/borrar?id=${id}`;
   
     fetch(url, {
-      method: 'DELETE', // Cambio a método DELETE
+      method: 'DELETE', 
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-      },
-      body: {
-        "id": datos.id
       },
     })
     .then(response => {
@@ -57,6 +54,8 @@ function App() {
     .then(data => {
       console.log(data);
       // Aquí podrías añadir lógica adicional para manejar la respuesta, como actualizar el estado para reflejar que el elemento ha sido borrado
+      // Por ejemplo, podrías volver a llamar a datosFetch() para actualizar la lista de reservas
+      datosFetch();
     })
     .catch(error => {
       console.error('Error en Fetch:', error);
@@ -78,6 +77,7 @@ function App() {
 
           {/* Contenedor principal para el contenido con transparencia */}
           <main className="mt-64 ml-10 mb-60 text-left p-6 bg-white bg-opacity-90 shadow-md rounded">
+            <h1>Reservas a nombre de {JSON.parse(name)}</h1>
             <table className="w-full my-4">
               <thead>
                 <tr className="bg-gradient-to-t from-gray-100 to-gray-400">
@@ -100,7 +100,7 @@ function App() {
                       <td className="px-4 py-2 border-b border-gray-300">{user.Mensaje}</td>
                       <td className="px-4 py-2 border-b border-gray-300 flex justify-around">
                         
-                        <button className="px-4 py-2 rounded text-white bg-red-800 hover:bg-red-700 transition duration-300" onClick={BorrardatosFetch}>
+                        <button className="px-4 py-2 rounded text-white bg-red-800 hover:bg-red-700 transition duration-300" onClick={() => BorrardatosFetch(user.id)}>
                           Borrar
                         </button>
                       </td>
