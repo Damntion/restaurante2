@@ -45,11 +45,7 @@ export const Login = () => {
       localStorage.setItem('password', JSON.stringify(data.password)); 
       localStorage.setItem('id', JSON.stringify(data.id)); 
       localStorage.setItem('name', JSON.stringify(data.name)); 
-      // if (data.tarjetas && data.tarjetas.length > 0) {
-      //   localStorage.setItem('tarjetas', JSON.stringify(data.tarjetas));
-      // } else {
-      //   localStorage.removeItem('tarjetas'); 
-      // } 
+
       setTimeout(()=>{
         navigate('/');
       }, 3000);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../componets/Header';
 import Footer from '../componets/Footer';
 
-function App() {
+function TusReservas() {
   const [datos, setDatos] = useState([]);
   const name = localStorage.getItem('name');
 
@@ -123,4 +123,4 @@ function App() {
   );
 }
 
-export default App;
+export default TusReservas;

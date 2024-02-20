@@ -4,6 +4,7 @@ import {Routes, Route} from 'react-router-dom';
 import Login from '../../views/Login';
 import TusReservas from '../../views/TusReservas';
 import Reservar from '../../views/Reservar';
+import MetodosPago from '../../views/MetodosPago';
 
 class Router extends React.Component{
     render()
@@ -31,6 +32,10 @@ class Router extends React.Component{
                 <Route
                     path='/Reservar'
                     element={<Reservar />}
+                />
+                <Route
+                    path='/MetodosPago'
+                    element={<MetodosPago />}
                 />
             </Routes>
         

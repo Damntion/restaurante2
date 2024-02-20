@@ -46,7 +46,7 @@ export default function Register() {
       setModalMessage('Usuario registrado con éxito.');
       setShowModal(true);
       setTimeout(()=>{
-        navigate('/');
+        navigate('/login');
       }, 3000);
     })
     .catch(error => {

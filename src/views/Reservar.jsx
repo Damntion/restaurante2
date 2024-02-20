@@ -11,92 +11,129 @@ import esLocale from '@fullcalendar/core/locales/es';
 
 
 function Reservar() {
-   // Intenta recuperar nombre y email del localStorage, o establece cadenas vacías si no existen
-   const storedName = JSON.parse(localStorage.getItem('name'));
-   const storedEmail = JSON.parse(localStorage.getItem('email'));
-   const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
-   const [modalMessage, setModalMessage] = useState(''); // Mensaje del modal
-   const handleClose = () => setShowModal(false);
- 
-   const [formData, setFormData] = useState({
-    nombre: storedName,
-    email: storedEmail,
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
     asunto: '',
     mensaje: '',
     fecha: '',
     eventoId: null,
+    tarjeta: '', 
   });
-
   const [eventos, setEventos] = useState([]);
- 
-   useEffect(() => {
-     fetch('http://localhost:8080/FullCalendar/public/api/eventos')
-       .then(response => response.json())
-       .then(data => {
-         const eventosCalendario = data.map(evento => ({
-           title: evento.nombre,
-           start: evento.fecha_hora_inicio,
-           end: evento.fecha_hora_fin,
-           id: evento.id,
-         }));
-         setEventos(eventosCalendario);
-         
-       })
-       .catch(error => console.log(error));
-   }, []);
- 
-   const handleDateSelect = (selectInfo) => {
-    const startDate = format(selectInfo.start, "yyyy-MM-dd'T'HH:mm:ss");
-    setFormData({ ...formData, fecha: startDate });
-    let calendarApi = selectInfo.view.calendar;
-    calendarApi.unselect(); // Limpia la selección visual en el calendario
+  const [tarjetas, setTarjetas] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:8080/FullCalendar/public/api/eventos')
+      .then(response => response.json())
+      .then(data => {
+        const eventosCalendario = data.map(evento => ({
+          title: evento.nombre,
+          start: evento.fecha_hora_inicio,
+          end: evento.fecha_hora_fin,
+          id: evento.id,
+        }));
+        setEventos(eventosCalendario);
+      })
+      .catch(error => console.log(error));
+
+    fetchTarjetasUsuario();
+  }, []);
+
+  const fetchTarjetasUsuario = () => {
+    const id = localStorage.getItem('id');
+    const token = localStorage.getItem('token');
+    const url = `http://localhost:8080/FullCalendar/public/api/mostrarTarjetas?id=${id}`;
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la solicitud Fetch');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setTarjetas(data.user);
+    })
+    .catch(error => {
+      console.error('Error en Fetch:', error);
+    });
   };
- 
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
- 
+
+  const handleDateSelect = (selectInfo) => {
+    const startDate = format(selectInfo.start, "yyyy-MM-dd'T'HH:mm:ss");
+    setFormData({ ...formData, fecha: startDate });
+    let calendarApi = selectInfo.view.calendar;
+    calendarApi.unselect(); 
+  };
+
   const handleEventClick = (clickInfo) => {
     const startDate = format(new Date(clickInfo.event.start), "yyyy-MM-dd'T'HH:mm:ss");
-    const eventoId = clickInfo.event.id; // Asegúrate de definir eventoId aquí antes de usarlo
+    const eventoId = clickInfo.event.id; 
     setFormData({ 
       ...formData, 
       fecha: startDate, 
-      eventoId, // Ahora correctamente definido antes de ser usado
+      eventoId, 
     });
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token'); // Recuperamos el token almacenado
-  
+    const token = localStorage.getItem('token'); 
+
     try {
       const response = await fetch('http://localhost:8080/FullCalendar/public/api/insertar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Asegúrate de que el token se maneje adecuadamente
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
-  
-      const data = await response.json(); // Suponiendo que el servidor devuelve JSON
-  
+
+      const data = await response.json(); 
+
       if (!response.ok) {
         throw new Error(data.message || 'Error al enviar los datos de la reserva');
       }
-  
-      // Respuesta positiva del servidor
-      setModalMessage('Reserva realizada con éxito.'); // Mensaje de éxito
-      setShowModal(true); // Mostrar modal
-  
+
+      setModalMessage('Reserva realizada con éxito.'); 
+      setShowModal(true);
+
     } catch (error) {
       console.error('Error durante la reserva o eliminación del evento: ', error);
-      setModalMessage(error.toString()); // Mensaje de error
-      setShowModal(true); // Aún puedes optar por mostrar el modal con el mensaje de error
+      setModalMessage(error.toString()); 
+      setShowModal(true);
     }
   };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    // Recuperar nombre y email del localStorage
+    const storedName = JSON.parse(localStorage.getItem('name'));
+    const storedEmail = JSON.parse(localStorage.getItem('email'));
   
+    // Establecer nombre y email en el estado formData
+    setFormData({
+      ...formData,
+      nombre: storedName,
+      email: storedEmail,
+    });
+  }, []);
 
   return (
     <>
@@ -107,17 +144,15 @@ function Reservar() {
           </div>
           <div className="ml-50 mt-48 flex flex-col md:flex-row justify-center items-start">
             <Header />
-            <div className="opacity-90 calendar-container w-1/2 max-h-[500px] overflow-hidden m-4 p-4 bg-gray-200 shadow-lg rounded-lg md:mr-4">
+            <div className="opacity-90 calendar-container w-1/2 max-h-[7000px] overflow-hidden m-4 p-4 bg-gray-200 shadow-lg rounded-lg md:mr-4">
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              initialView="dayGridMonth" // Cambiar a la vista de mes
               selectable={true}
-              locale={esLocale} // Configuración de idioma a español
-              events={eventos} // Asegúrate de que 'eventos' tenga la estructura correcta
+              locale={esLocale}
+              events={eventos}
               select={handleDateSelect}
               eventClick={handleEventClick}
-              slotMinTime="12:00:00" // Hora de inicio a las 12 PM
-              slotMaxTime="24:00:00" // Extiende hasta las 12 AM (fin del día)
               aspectRatio={1.35}
             />
             </div>
@@ -164,6 +199,19 @@ function Reservar() {
             className=" appearance-none block w-full h-12 px-3 py-2 border-black border-2 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             readOnly
           />
+          <select
+            name="tarjeta"
+            onChange={handleChange}
+            value={formData.tarjeta}
+            className="mt-4 mb-4 appearance-none block w-full h-12 px-3 py-2 border-black border-2 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="">Seleccionar tarjeta</option>
+            {tarjetas.map(tarjeta => (
+              <option key={tarjeta.id} value={tarjeta.numero}>
+                Tarjeta termianda en ...{tarjeta.numero.substring(tarjeta.numero.length - 4)} {/* Muestra solo los últimos cuatro dígitos */}
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             className="px-4 opacity-100 py-2 ml-52 mt-6  h-14 w-80 text-sm font-medium text-white rounded-md bg-gradient-to-t from-gray-500  hover:bg-gray-600 transition duration-300 ">
