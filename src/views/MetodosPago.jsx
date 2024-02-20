@@ -115,7 +115,6 @@ function MetodosPago() {
                   <tr className="bg-gradient-to-t from-gray-100 to-gray-400">
                     <th className="px-4 py-2 border-b border-gray-300">Nombre</th>
                     <th className="px-4 py-2 border-b border-gray-300">Numero</th>
-                    <th className="px-4 py-2 border-b border-gray-300">Fecha de expiracion</th>
                     <th className="px-4 py-2 border-b border-gray-300">cvv</th>
                     <th className="px-4 py-2 border-b border-gray-300">Acciones</th>
                   </tr>
@@ -126,7 +125,6 @@ function MetodosPago() {
                       <tr key={index}>
                         <td className="px-4 py-2 border-b border-gray-300">{user.nombre}</td>
                         <td className="px-4 py-2 border-b border-gray-300">{user.numero}</td>
-                        <td className="px-4 py-2 border-b border-gray-300">{user.fechaExpiracion}</td>
                         <td className="px-4 py-2 border-b border-gray-300">{user.cvv}</td>
                         <td className="px-4 py-2 border-b border-gray-300 flex justify-around">
                           <button className="px-4 py-2 rounded text-white bg-red-800 hover:bg-red-700 transition duration-300" onClick={() => BorrardatosFetch(user.id)}>

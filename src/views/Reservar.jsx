@@ -156,7 +156,7 @@ function Reservar() {
               aspectRatio={1.35}
             />
             </div>
-          <form onSubmit={handleSubmit} className="opacity-80 font-bold form-container m-4 p-4 w-50 shadow-lg rounded-lg bg-white">
+          <form onSubmit={handleSubmit} className="opacity-80 font-bold form-container m-4 p-4 w-50 shadow-lg rounded-xl bg-white">
           <input
             type="text"
             name="nombre"

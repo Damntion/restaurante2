@@ -36,20 +36,21 @@ function Header() {
                 <img src="/src/assets/Boton.png" alt="Botón de usuario" />
               </button>
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-40 bg-gray-200 shadow-md rounded-md">
-                  <Link to="/MetodosPago" className="block text-gray-800 px-4 py-2 hover:bg-gray-200">
-                    Métodos de pago
-                  </Link>
-                  <Link to="/Reservar" className="block text-gray-800 px-4 py-2 hover:bg-gray-200">
-                    Reservar
-                  </Link>
-                  <Link to="/TusReservas" className="block text-gray-800 px-4 py-2 hover:bg-gray-200">
-                    Tus reservas
-                  </Link>
-                  <button onClick={logout} className="block text-gray-800 px-4 py-2 hover:bg-gray-200">
-                    Cerrar sesion 
-                  </button>
-                </div>
+                <div className="absolute right-0 mt-2 w-40 bg-black shadow-md rounded-md text-white">
+                <Link to="/MetodosPago" className="block px-4 py-2 hover:bg-gray-800">
+                  Métodos de pago
+                </Link>
+                <Link to="/Reservar" className="block px-4 py-2 hover:bg-gray-800">
+                  Reservar
+                </Link>
+                <Link to="/TusReservas" className="block px-4 py-2 hover:bg-gray-800">
+                  Tus reservas
+                </Link>
+                <Link onClick={logout} className="block px-4 py-2 hover:bg-gray-800">
+                  Cerrar sesión
+                </Link>
+              </div>
+              
               )}
             </div>
           </div>
